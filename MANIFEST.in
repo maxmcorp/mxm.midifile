@@ -1,0 +1,9 @@
+include README.md
+include mxm/midifile/docs/*.md
+
+include mxm/midifile/tests/midifiles/*.mid
+include mxm/midifile/tests/midifiles/*.md
+
+include mxm/midifile/examples/midi-in/*.mid
+include mxm/midifile/examples/midi-out/*.mid
+
