@@ -31,7 +31,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: Implementation :: CPython',
         # 'Programming Language :: Python :: Implementation :: PyPy',
-        'Topic :: Midi tools',
+        'Topic :: Artistic Software',
     ],
     keywords=[
         'midi', 'music', 'algorithmic composition', 'midi parser', 'midi reader'
