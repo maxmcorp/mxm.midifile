@@ -13,7 +13,7 @@ and it makes it easier to understand how both midi and mxm.midifile works.
 >>> with open('/home/maxm/instances/midienv/mxm.midifile-1.0/mxm/midifile/tests/midifiles/minimal.mid', 'rb') as f:
 ...     midiIn = MidiInFile(MidiToCode(), f)
 ...     midiIn.read()
-from midi_outfile import MidiOutFile
+from mxm.midifile import MidiOutFile
 <BLANKLINE>
 midi_out = MidiOutFile('file.mid')
 midi_out.header(format=1, nTracks=2, division=15360)
@@ -229,13 +229,13 @@ class MidiToCode(MidiEvents):
     def header(self, format=0, nTracks=1, division=96):
         """
         >>> MidiToCode().header(format=0, nTracks=1, division=96)
-        from midi_outfile import MidiOutFile
+        from mxm.midifile import MidiOutFile
         <BLANKLINE>
         midi_out = MidiOutFile('file.mid')
         midi_out.header(format=0, nTracks=1, division=96)
         <BLANKLINE>
         """
-        print ('from midi_outfile import MidiOutFile')
+        print ('from mxm.midifile import MidiOutFile')
         print()
         print ("midi_out = MidiOutFile('file.mid')")
         fmt_st = 'midi_out.header(format=%s, nTracks=%s, division=%s)'
