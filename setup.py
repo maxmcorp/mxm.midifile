@@ -6,6 +6,7 @@ setup(
     author='Max M Rasmussen',
     author_email='maxm@mxm.dk',
     name='mxm.midifile',
+    description='A python 3 library for reading, writing and modifying midi files',
     version='1.0',
     packages=find_packages(),
     include_package_data=True,
