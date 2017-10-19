@@ -19,7 +19,7 @@ class MidiInFile:
     >>> from mxm.midifile import MidiToCode
     >>> midi_in = MidiInFile(MidiToCode(), test_file)
     >>> midi_in.read()
-    from midi_outfile import MidiOutFile
+    from mxm.midifile import MidiOutFile
     <BLANKLINE>
     midi_out = MidiOutFile('file.mid')
     midi_out.header(format=1, nTracks=2, division=15360)

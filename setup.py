@@ -7,8 +7,15 @@ setup(
     author_email='maxm@mxm.dk',
     name='mxm.midifile',
     description='A python 3 library for reading, writing and modifying midi files',
-    version='1.0',
-    packages=find_packages(),
+    version='1.1',
+    # packages=find_packages(),
+    packages=[
+        'mxm.midifile',
+        'mxm.midifile.src',
+        'mxm.midifile.docs',
+        'mxm.midifile.tests',
+        'mxm.midifile.examples',
+    ],
     include_package_data=True,
     install_requires=requires,
     tests_require=requires+['nose==1.3.7'],
@@ -37,7 +44,6 @@ setup(
     keywords=[
         'midi', 'music', 'algorithmic composition', 'midi parser', 'midi reader'
     ],
-
 )
 
 
