@@ -184,7 +184,7 @@ class MidiOutFile(MidiEvents):
         """
         super().midi_time_code(msg_type, values)
         value = (msg_type<<4) + values
-        self.event_slice([c.MIDI_TIME_CODE, value])
+        self.event_slice([c.MTC, value])
 
 
     def song_position_pointer(self, value):
