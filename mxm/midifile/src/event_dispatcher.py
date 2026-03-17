@@ -104,8 +104,8 @@ class EventDispatcher:
             note, velocity = data
             events.note_off(channel, note, velocity, use_running_status)
         elif (c.AFTERTOUCH) == hi_nible:
-            note, velocity = data
-            events.aftertouch(channel, note, velocity, use_running_status)
+            note, pressure = data
+            events.aftertouch(channel, note, pressure, use_running_status)
         elif (c.CONTINUOUS_CONTROLLER) == hi_nible:
             controller, value = data
             # A lot of the cc's are defined, so we trigger those directly
@@ -120,7 +120,7 @@ class EventDispatcher:
             pressure = data[0]
             events.channel_pressure(channel, pressure, use_running_status)
         elif (c.PITCH_BEND) == hi_nible:
-            hibyte, lobyte = data
+            lobyte, hibyte = data
             value = (hibyte<<7) + lobyte
             events.pitch_bend(channel, value, use_running_status)
         else:
@@ -149,7 +149,7 @@ class EventDispatcher:
         # MTC Midi time code Quarter value
         if common_type == c.MTC:
             data = readBew(common_data)
-            msg_type = (data & 0x07) >> 4
+            msg_type = (data & 0x70) >> 4
             values = (data & 0x0F)
             events.midi_time_code(msg_type, values)
         elif common_type == c.SONG_POSITION_POINTER:
@@ -161,7 +161,7 @@ class EventDispatcher:
             events.song_select(data)
         elif common_type == c.TUNING_REQUEST:
             # no data then
-            events.tuning_request(time=None)
+            events.tuning_request()
 
 
 

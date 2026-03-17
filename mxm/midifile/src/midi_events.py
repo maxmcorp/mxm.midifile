@@ -240,21 +240,20 @@ class MidiEvents:
         self.set_running_status(c.NOTE_OFF, channel)
 
 
-    def aftertouch(self, channel=0, note=0x40, velocity=0x40, use_running_status=False):
-        #XXX should velocity not be value ???
+    def aftertouch(self, channel=0, note=0x40, pressure=0x40, use_running_status=False):
         """
-        channel: 0-15, note, velocity: 0-127
+        channel: 0-15, note, pressure: 0-127
         >>> MidiEvents().aftertouch(0,64,64)
         >>> MidiEvents().aftertouch(0,64,200)
         Traceback (most recent call last):
         ...
-        AssertionError: Illegal velocity value: 200
+        AssertionError: Illegal pressure value: 200
         """
         self._check_ch(channel)
         status = (c.AFTERTOUCH<<4) + channel
         self._check_run_stat(use_running_status, status)
         assert (0<=note<=127), 'Illegal note value: %s' % note
-        assert (0<=velocity<=127), 'Illegal velocity value: %s' % velocity
+        assert (0<=pressure<=127), 'Illegal pressure value: %s' % pressure
         self.set_running_status(c.AFTERTOUCH, channel)
 
 
@@ -318,7 +317,7 @@ class MidiEvents:
         self._check_ch(channel)
         status = (c.PITCH_BEND<<4) + channel
         self._check_run_stat(use_running_status, status)
-        assert (0<=value<=32639), 'Illegal value: %s' %  value
+        assert (0<=value<=16383), 'Illegal value: %s' %  value
 
 
 
@@ -516,11 +515,11 @@ class MidiEvents:
         assert(0<=channel<=15)
 
 
-    def midi_port(self, channel):
+    def midi_port(self, value):
         """
         value: Midi port (deprecated in the spec)
         """
-        assert(0<=channel<=15)
+        assert(0<=value<=127), 'Midi port must be in 0..127 range. Was: %s' % value
 
 
     def tempo(self, tempo):
@@ -613,7 +612,10 @@ class MidiEvents:
         ...
         AssertionError: sf must be in -7..7 range. Was -121
         """
-        assert(-7<=sf<=7), 'sf must be in -7..7 range. Was %s' % sf
+        if not (-7<=sf<=7):
+            import warnings
+            warnings.warn('key_signature sf should be in -7..7 range. Was %s. Clamping.' % sf)
+            sf = max(-7, min(7, sf))
         assert(0<=mi<=1), 'mi must be in [0,1] range. Was %s' % mi
 
 

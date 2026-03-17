@@ -102,19 +102,19 @@ class MidiToCode(MidiEvents):
         st = (fmt_st % (channel, note, velocity))
         print (st)
 
-    def aftertouch(self, channel=0, note=0x40, velocity=0x40, use_running_status=False):
+    def aftertouch(self, channel=0, note=0x40, pressure=0x40, use_running_status=False):
         """
-        >>> note=40; velocity=40; ch=1;
-        >>> MidiToCode().aftertouch(ch, note, velocity)
+        >>> note=40; pressure=40; ch=1;
+        >>> MidiToCode().aftertouch(ch, note, pressure)
         midi_out.update_time(new_time=0)
-        midi_out.aftertouch(channel=1, note=40, velocity=40)
+        midi_out.aftertouch(channel=1, note=40, pressure=40)
         """
         self._pt()
         if use_running_status:
-            fmt_st = "midi_out.aftertouch(channel=%s, note=%s, velocity=%s, use_running_status=True)"
+            fmt_st = "midi_out.aftertouch(channel=%s, note=%s, pressure=%s, use_running_status=True)"
         else:
-            fmt_st = "midi_out.aftertouch(channel=%s, note=%s, velocity=%s)"
-        st = (fmt_st % (channel, note, velocity))
+            fmt_st = "midi_out.aftertouch(channel=%s, note=%s, pressure=%s)"
+        st = (fmt_st % (channel, note, pressure))
         print (st)
 
     def continuous_controller(self, channel, controller, value, use_running_status=False):

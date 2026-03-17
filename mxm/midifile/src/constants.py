@@ -147,7 +147,7 @@ SONG_SELECT = 0xF3
 TUNING_REQUEST = 0xF6
 # 11110110
 
-END_OFF_EXCLUSIVE = 0xF7 # terminator
+END_OF_EXCLUSIVE = 0xF7 # terminator
 # 11110111 # End of system exclusive
 
 

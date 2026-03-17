@@ -85,7 +85,7 @@ If you want to do something usefull, like transposing the notes in a midi file, 
         def _transp(self, ch, note):
             if ch != 9: # not the drums!
                 if 0 <= (note+self.delta) <= 127: # dont transpose out of midi range
-                    note += self.
+                    note += self.delta
             return note
 
         def note_on(self, channel=0, note=0x40, velocity=0x40, use_running_status=False):

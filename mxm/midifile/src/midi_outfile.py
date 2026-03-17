@@ -86,16 +86,16 @@ class MidiOutFile(MidiEvents):
         self.event_slice(slc)
 
 
-    def aftertouch(self, channel=0, note=0x40, velocity=0x40, use_running_status=False):
+    def aftertouch(self, channel=0, note=0x40, pressure=0x40, use_running_status=False):
         """
         channel: 0-15
-        note, velocity: 0-127
+        note, pressure: 0-127
         """
-        super().aftertouch(channel, note, velocity, use_running_status=use_running_status)
+        super().aftertouch(channel, note, pressure, use_running_status=use_running_status)
         if use_running_status:
-            slc = [note, velocity]
+            slc = [note, pressure]
         else:
-            slc = [(c.AFTERTOUCH<<4) + channel, note, velocity]
+            slc = [(c.AFTERTOUCH<<4) + channel, note, pressure]
         self.event_slice(slc)
 
 
@@ -148,12 +148,12 @@ class MidiOutFile(MidiEvents):
         value: 0-16383
         """
         super().pitch_bend(channel, value, use_running_status=use_running_status)
-        msb = (value>>7) & 0xFF
-        lsb = value & 0xFF
+        msb = (value>>7) & 0x7F
+        lsb = value & 0x7F
         if use_running_status:
-            slc = [msb, lsb]
+            slc = [lsb, msb]
         else:
-            slc = [(c.PITCH_BEND<<4) + channel, msb, lsb]
+            slc = [(c.PITCH_BEND<<4) + channel, lsb, msb]
         self.event_slice(slc)
 
 
@@ -170,7 +170,7 @@ class MidiOutFile(MidiEvents):
         sysex_slice = bytearray([c.SYSTEM_EXCLUSIVE])
         sysex_slice += bytearray(writeVar(len(data)+1)) # sysex_len
         sysex_slice += data
-        sysex_slice += bytearray([c.END_OFF_EXCLUSIVE])
+        sysex_slice += bytearray([c.END_OF_EXCLUSIVE])
         self.event_slice(sysex_slice)
 
 
@@ -210,7 +210,7 @@ class MidiOutFile(MidiEvents):
         No values passed
         """
         super().tuning_request()
-        self.event_slice(chr(c.TUNING_REQUEST))
+        self.event_slice([c.TUNING_REQUEST])
 
             
     #########################
@@ -441,9 +441,9 @@ class MidiOutFile(MidiEvents):
         >>> midi_out.midi_port(4)
         >>> midi_out.end_of_track()
         >>> list(midi_out.read_all())
-        [77, 84, 114, 107, 0, 0, 0, 9, 0, 255, 32, 1, 4, 0, 255, 47, 0]
+        [77, 84, 114, 107, 0, 0, 0, 9, 0, 255, 33, 1, 4, 0, 255, 47, 0]
         """
-        self.meta_slice(c.MIDI_CH_PREFIX, bytes([value]))
+        self.meta_slice(c.MIDI_PORT, bytes([value]))
 
 
     def tempo(self, value):

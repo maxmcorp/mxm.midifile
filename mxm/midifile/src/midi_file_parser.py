@@ -175,17 +175,27 @@ class MidiFileParser:
             else:
                 # use that darn running status
                 status = self.get_running_status()
+                if status is None:
+                    raise ValueError(
+                        'Running status is None but data byte encountered '
+                        'at position %d. The MIDI file may be corrupt.' % raw_in.getCursor()
+                    )
                 self._use_running_status = True
 
-                # while I am almost certain that no realtime 
-                # messages will pop up in a midi file, I might need to 
+                # while I am almost certain that no realtime
+                # messages will pop up in a midi file, I might need to
                 # change my mind later.
 
             # we need to look at nibbles here
 #            print('='*80)
 #            print (status)
             hi_nible, lo_nible = (status & 0xF0) >> 4, status & 0x0F
-            if hi_nible == 0xF:
+            # Per strict MIDI spec, system messages reset running status.
+            # However, in MIDI files, meta events (0xFF) and sysex (0xF0)
+            # are file-only constructs. Many sequencers rely on running
+            # status persisting across them. Only reset for system common
+            # messages (0xF1-0xF6) which are true wire-protocol messages.
+            if hi_nible == 0xF and status not in (c.META_EVENT, c.SYSTEM_EXCLUSIVE, c.END_OF_EXCLUSIVE):
                 self.reset_running_status()
             
             # match up with events
@@ -202,29 +212,29 @@ class MidiFileParser:
 
             # Is it a sysex_event ??
             elif status == c.SYSTEM_EXCLUSIVE:
-                # ignore sysex events
+                # In MIDI files, sysex format is: F0 <varlen> <data...>
+                # The length includes all bytes up to and including F7.
                 sysex_length = raw_in.readVarLen()
-                # don't read sysex terminator
-                sysex_data = raw_in.nextSlice(sysex_length-1)
-                # only read last data byte if it is a sysex terminator
-                # It should allways be there, but better safe than sorry
-                if raw_in.readBew(move_cursor=0) == c.END_OFF_EXCLUSIVE:
-                    eo_sysex = raw_in.readBew()
+                sysex_raw = raw_in.nextSlice(sysex_length)
+                # Strip the F7 terminator if present
+                if sysex_raw and sysex_raw[-1] == c.END_OF_EXCLUSIVE:
+                    sysex_data = sysex_raw[:-1]
+                else:
+                    sysex_data = sysex_raw
                 dispatch.sysex_event(sysex_data)
-                # the sysex code has not been properly tested, and might be fishy!
 
 
             # is it a system common event?
-            elif hi_nible == 0xF0: # Hi bits are set then
+            elif hi_nible == 0xF: # Hi bits are set then
                 data_sizes = {
                     c.MTC:1,
                     c.SONG_POSITION_POINTER:2,
                     c.SONG_SELECT:1,
                 }
-                data_size = data_sizes.get(hi_nible, 0)
+                data_size = data_sizes.get(status, 0)
                 common_data = raw_in.nextSlice(data_size)
-                common_type = lo_nible
-                dispatch.system_common(common_type, common_data)
+                common_type = status
+                dispatch.system_commons(common_type, common_data)
             
 
             # Oh! Then it must be a midi event (channel voice message)
